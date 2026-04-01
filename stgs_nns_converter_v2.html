@@ -1,0 +1,356 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>STGS Nashville Number System Converter v2</title>
+<style>
+:root{
+  --navy:#001023; --gold:#D2AA40; --parch:#F2E4C5; --paper:#f8f5ee; --ink:#172033; --muted:#5f6b7a;
+  --card:#fffdfa; --line:#d9cba3; --soft:#f3eee2; --green:#1f7a4a; --red:#a33636;
+}
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:linear-gradient(180deg,#faf7f0 0%,#f4efe5 100%);color:var(--ink)}
+.topbar{background:var(--navy);color:white;padding:12px 0;border-bottom:3px solid var(--gold)}
+.wrap{max-width:1220px;margin:0 auto;padding:0 24px}
+.brand{display:flex;justify-content:space-between;align-items:center;gap:16px}
+.brand .left{font-weight:700;letter-spacing:.06em;color:var(--parch);font-size:13px;text-transform:uppercase}
+.brand .right{font-size:12px;color:#cbd5e1}
+.hero{padding:26px 0 16px}
+h1{margin:0 0 8px;font-size:36px;line-height:1.08;color:var(--navy)}
+.lead{margin:0;color:var(--muted);font-size:16px;max-width:900px}
+.grid{display:grid;grid-template-columns:1.2fr .8fr;gap:20px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 10px 26px rgba(0,16,35,.05)}
+label{display:block;font-weight:700;font-size:12px;letter-spacing:.07em;text-transform:uppercase;color:#334155;margin:10px 0 7px}
+textarea,select,input,button{font:inherit}
+textarea,select{width:100%;padding:12px 13px;border:1px solid #cdbd91;border-radius:12px;background:white}
+textarea{min-height:110px;resize:vertical}
+.row2,.row3{display:grid;gap:12px}
+.row2{grid-template-columns:1fr 1fr}
+.row3{grid-template-columns:1fr 1fr 1fr}
+.btns{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+button{border:none;border-radius:12px;padding:12px 16px;font-weight:700;cursor:pointer}
+button.primary{background:var(--gold);color:var(--navy)}
+button.dark{background:var(--navy);color:white}
+button.soft{background:var(--soft);color:var(--navy)}
+.pill{display:inline-block;padding:6px 10px;border-radius:999px;background:var(--soft);color:#664d12;font-weight:700;font-size:12px}
+.kpi{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:12px}
+.kbox{background:var(--soft);border:1px solid var(--line);border-radius:14px;padding:12px}
+.kbox .n{font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+.kbox .v{font-size:22px;font-weight:700;color:var(--navy);margin-top:4px}
+.result{padding:14px;border:1px dashed #ccb88b;border-radius:14px;background:#fff}
+.big{font-size:28px;font-weight:700;line-height:1.35}
+.mono{font-family:"Courier New",monospace}
+.small{font-size:13px;color:var(--muted)}
+.ok{color:var(--green);font-weight:700}
+.warn{color:var(--red);font-weight:700}
+table{width:100%;border-collapse:collapse;margin-top:10px}
+th,td{padding:9px 8px;border-bottom:1px solid #eadfc4;text-align:left;font-size:14px;vertical-align:middle}
+th{font-size:12px;text-transform:uppercase;color:#64748b;letter-spacing:.06em}
+tbody tr:nth-child(even){background:#fcfaf5}
+.footer{margin:18px 0 28px;color:var(--muted);font-size:12px}
+.code-note{background:var(--soft);border-left:4px solid var(--gold);padding:10px 12px;border-radius:10px;font-size:13px;color:#334155}
+@media (max-width:960px){.grid,.grid2,.row2,.row3,.kpi{grid-template-columns:1fr}}
+@media print{
+  body{background:white}
+  .topbar,.footer,.btns{display:none}
+  .wrap{max-width:none;padding:0}
+  .card{box-shadow:none;break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="wrap brand">
+    <div class="left">String Theory Guitar Studio</div>
+    <div class="right">Nashville Number System Converter v2</div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="hero">
+    <h1>Nashville Number System Converter v2</h1>
+    <p class="lead">Convert chord progressions into Nashville numbers, transpose them cleanly into a new key, work in major or minor, and keep chord colors like maj7, m7, sus, add9, and slash bass notes attached to the chart.</p>
+  </div>
+
+  <div class="grid">
+    <section class="card">
+      <label for="progression">Chord progression</label>
+      <textarea id="progression">C - G - Am7 - Fadd9</textarea>
+      <div class="small">Accepted examples: C - G - Am - F, Cmaj7 G/B Am7 Fadd9, Dm7 - G7 - Cmaj7, Am - G - F - G, E - B/D# - C#m7 - Aadd9</div>
+
+      <div class="row3">
+        <div>
+          <label for="sourceKey">Source key</label>
+          <select id="sourceKey"></select>
+        </div>
+        <div>
+          <label for="targetKey">Target key</label>
+          <select id="targetKey"></select>
+        </div>
+        <div>
+          <label for="mode">Song mode</label>
+          <select id="mode">
+            <option value="major">Major</option>
+            <option value="minor">Minor</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="row2">
+        <div>
+          <label for="notation">Accidental style</label>
+          <select id="notation">
+            <option value="auto">Auto</option>
+            <option value="sharps">Sharps</option>
+            <option value="flats">Flats</option>
+          </select>
+        </div>
+        <div>
+          <label for="numberStyle">Number style</label>
+          <select id="numberStyle">
+            <option value="compact">Compact (6m, b7, 5sus4)</option>
+            <option value="spaced">Spaced (6m, b7, 5 sus4)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="btns">
+        <button class="primary" id="convertBtn">Convert</button>
+        <button class="soft" id="swapBtn">Swap keys</button>
+        <button class="dark" id="printBtn">Print chart</button>
+      </div>
+
+      <div class="kpi">
+        <div class="kbox"><div class="n">Detected chords</div><div class="v" id="countOut">4</div></div>
+        <div class="kbox"><div class="n">Chart mode</div><div class="v" id="modeOut">Major</div></div>
+        <div class="kbox"><div class="n">Key shift</div><div class="v" id="shiftOut">0</div></div>
+      </div>
+    </section>
+
+    <aside class="card">
+      <div class="pill">Quick map</div>
+      <div id="degreeMap" style="margin-top:10px"></div>
+      <div class="code-note" style="margin-top:12px">
+        <b>Minor-key baseline:</b> 1m, 2dim, b3, 4m, 5m, b6, b7<br/>
+        <b>Examples:</b> 1maj7, 6m7, 5sus4, b7add9, 2/3
+      </div>
+    </aside>
+  </div>
+
+  <div class="grid2">
+    <section class="card">
+      <label>Nashville numbers</label>
+      <div class="result big mono" id="numbersOut">1 - 5 - 6m7 - 4add9</div>
+      <table id="analysisTable">
+        <thead>
+          <tr><th>#</th><th>Input chord</th><th>Number</th><th>Roman / note</th><th>Status</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <section class="card">
+      <label>Transposed progression</label>
+      <div class="result big mono" id="transposeOut">C - G - Am7 - Fadd9</div>
+
+      <label style="margin-top:16px">Band chart line</label>
+      <div class="result mono" id="chartOut">| C | G | Am7 | Fadd9 |</div>
+
+      <label style="margin-top:16px">Number chart line</label>
+      <div class="result mono" id="numberChartOut">| 1 | 5 | 6m7 | 4add9 |</div>
+
+      <div class="footer">Tip: for rehearsal charts, write section labels outside the bars. Keep arrangement notes short and let the numbers do the heavy lifting.</div>
+    </section>
+  </div>
+
+  <div class="footer">Standalone local HTML app. Save this file anywhere on your Mac and open it in Safari or Chrome.</div>
+</div>
+
+<script>
+const SHARP_NOTES = ['C','C#','D','D#','E','F','F#','G','G#','A','A#','B'];
+const FLAT_NOTES  = ['C','Db','D','Eb','E','F','Gb','G','Ab','A','Bb','B'];
+const NOTE_TO_PC = {'C':0,'B#':0,'C#':1,'Db':1,'D':2,'D#':3,'Eb':3,'E':4,'Fb':4,'E#':5,'F':5,'F#':6,'Gb':6,'G':7,'G#':8,'Ab':8,'A':9,'A#':10,'Bb':10,'B':11,'Cb':11};
+const MAJOR_KEYS = ['C','Db','D','Eb','E','F','Gb','G','Ab','A','Bb','B'];
+const MINOR_KEYS = ['Am','Bbm','Bm','Cm','C#m','Dm','Ebm','Em','Fm','F#m','Gm','G#m'];
+const preferFlats = new Set(['F','Bb','Eb','Ab','Db','Gb','Cb']);
+const scaleRef = {
+  major: { intervals:[0,2,4,5,7,9,11], labels:['1','2','3','4','5','6','7'], defaultQuality:['','m','m','','','m','dim'], romans:['I','ii','iii','IV','V','vi','vii°'] },
+  minor: { intervals:[0,2,3,5,7,8,10], labels:['1','2','b3','4','5','b6','b7'], defaultQuality:['m','dim','','m','m','',''], romans:['i','ii°','III','iv','v','VI','VII'] }
+};
+const chromaticDegreeMap = {
+  0:'1',1:'b2',2:'2',3:'b3',4:'3',5:'4',6:'#4',7:'5',8:'b6',9:'6',10:'b7',11:'7'
+};
+
+function populate(){
+  for(const k of MAJOR_KEYS){
+    sourceKey.add(new Option(k,k));
+    targetKey.add(new Option(k,k));
+  }
+  sourceKey.value = 'C';
+  targetKey.value = 'C';
+}
+
+function updateKeyMenus(){
+  const list = mode.value === 'major' ? MAJOR_KEYS : MINOR_KEYS;
+  const currentSource = sourceKey.value;
+  const currentTarget = targetKey.value;
+  sourceKey.innerHTML = '';
+  targetKey.innerHTML = '';
+  for(const k of list){
+    sourceKey.add(new Option(k,k));
+    targetKey.add(new Option(k,k));
+  }
+  sourceKey.value = list.includes(currentSource) ? currentSource : list[0];
+  targetKey.value = list.includes(currentTarget) ? currentTarget : list[0];
+}
+
+function tonicName(key){
+  return key.endsWith('m') ? key.slice(0,-1) : key;
+}
+
+function pcToNote(pc, modeStyle='auto', key='C'){
+  pc = (pc + 12) % 12;
+  const tonic = tonicName(key);
+  if(modeStyle === 'sharps') return SHARP_NOTES[pc];
+  if(modeStyle === 'flats') return FLAT_NOTES[pc];
+  return preferFlats.has(tonic) ? FLAT_NOTES[pc] : SHARP_NOTES[pc];
+}
+
+function parseTokens(text){
+  return text.split(/\s*(?:\||,|\n|\r|–|—|-)+\s*/).map(s => s.trim()).filter(Boolean);
+}
+
+function parseChord(ch){
+  const m = ch.match(/^([A-G](?:#|b)?)(.*)$/);
+  if(!m) return null;
+  const root = m[1];
+  let rest = m[2] || '';
+  let bass = null;
+  if(rest.includes('/')){
+    const parts = rest.split('/');
+    rest = parts[0];
+    bass = parts[1];
+  }
+  return { raw: ch, root, pc: NOTE_TO_PC[root], quality: rest, bass };
+}
+
+function detectNumber(chord, songKey, songMode, style='compact'){
+  const tonicPc = NOTE_TO_PC[tonicName(songKey)];
+  const interval = (chord.pc - tonicPc + 12) % 12;
+  const numberBase = chromaticDegreeMap[interval] || '?';
+
+  // default diatonic quality if chord has no explicit quality
+  const ref = scaleRef[songMode];
+  const diatonicIndex = ref.intervals.indexOf(interval);
+  let explicit = chord.quality || '';
+  let bassPart = chord.bass || '';
+
+  let out = numberBase;
+  if(explicit){
+    let q = explicit;
+    // normalize common leading minor markers
+    if(q.startsWith('m') && !q.startsWith('maj') && !out.endsWith('m') && !out.endsWith('dim') && !numberBase.startsWith('b3') && !numberBase.startsWith('b6') && !numberBase.startsWith('b7')){
+      out += 'm';
+      q = q.slice(1);
+    }
+    if(/^(dim|°)/i.test(q) && !out.endsWith('dim')){
+      out += 'dim';
+      q = q.replace(/^(dim|°)/i,'');
+    }
+    if(q){
+      out += style === 'spaced' && !q.startsWith('/') ? ' ' + q : q;
+    }
+  }else if(diatonicIndex > -1){
+    const q = ref.defaultQuality[diatonicIndex];
+    if(q === 'm' && !out.endsWith('m')) out += 'm';
+    if(q === 'dim' && !out.endsWith('dim')) out += 'dim';
+  }
+
+  if(bassPart){
+    const bassPc = NOTE_TO_PC[bassPart];
+    if(bassPc !== undefined){
+      const bassInterval = (bassPc - tonicPc + 12) % 12;
+      out += '/' + chromaticDegreeMap[bassInterval];
+    }else{
+      out += '/' + bassPart;
+    }
+  }
+
+  let roman = 'Chromatic / borrowed';
+  if(diatonicIndex > -1) roman = ref.romans[diatonicIndex];
+  return { number: out, roman, interval, diatonic: diatonicIndex > -1 };
+}
+
+function transposeChord(chord, sourceKeyName, targetKeyName, notationMode){
+  const sourceTonicPc = NOTE_TO_PC[tonicName(sourceKeyName)];
+  const targetTonicPc = NOTE_TO_PC[tonicName(targetKeyName)];
+  const shift = (targetTonicPc - sourceTonicPc + 12) % 12;
+  let out = pcToNote(chord.pc + shift, notationMode, targetKeyName) + (chord.quality || '');
+  if(chord.bass){
+    const bassPc = NOTE_TO_PC[chord.bass];
+    out += '/' + (bassPc !== undefined ? pcToNote(bassPc + shift, notationMode, targetKeyName) : chord.bass);
+  }
+  return out;
+}
+
+function renderDegreeMap(){
+  const ref = scaleRef[mode.value];
+  const tonicPc = NOTE_TO_PC[tonicName(targetKey.value)];
+  let html = '<table><thead><tr><th>Degree</th><th>Chord</th><th>Roman</th></tr></thead><tbody>';
+  for(let i=0;i<ref.intervals.length;i++){
+    const note = pcToNote(tonicPc + ref.intervals[i], notation.value, targetKey.value);
+    const chord = note + ref.defaultQuality[i];
+    html += `<tr><td>${ref.labels[i]}${ref.defaultQuality[i] && !ref.labels[i].includes('m') && !ref.labels[i].includes('dim') ? ref.defaultQuality[i] : ''}</td><td>${chord}</td><td>${ref.romans[i]}</td></tr>`;
+  }
+  html += '</tbody></table>';
+  degreeMap.innerHTML = html;
+}
+
+function convert(){
+  const tokens = parseTokens(progression.value);
+  const parsed = tokens.map(parseChord).filter(Boolean);
+  const tbody = document.querySelector('#analysisTable tbody');
+  tbody.innerHTML = '';
+  const nums = [], trans = [];
+  parsed.forEach((ch, i) => {
+    const info = detectNumber(ch, sourceKey.value, mode.value, numberStyle.value);
+    nums.push(info.number);
+    trans.push(transposeChord(ch, sourceKey.value, targetKey.value, notation.value));
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${i+1}</td><td>${ch.raw}</td><td class="mono">${info.number}</td><td>${info.roman}</td><td class="${info.diatonic ? 'ok':'warn'}">${info.diatonic ? 'Diatonic':'Chromatic'}</td>`;
+    tbody.appendChild(tr);
+  });
+
+  numbersOut.textContent = nums.join(' - ');
+  transposeOut.textContent = trans.join(' - ');
+  chartOut.textContent = '| ' + trans.join(' | ') + ' |';
+  numberChartOut.textContent = '| ' + nums.join(' | ') + ' |';
+  countOut.textContent = parsed.length;
+  modeOut.textContent = mode.value === 'major' ? 'Major' : 'Minor';
+  const shift = (NOTE_TO_PC[tonicName(targetKey.value)] - NOTE_TO_PC[tonicName(sourceKey.value)] + 12) % 12;
+  shiftOut.textContent = shift + ' st';
+  renderDegreeMap();
+}
+
+populate();
+updateKeyMenus();
+convert();
+
+convertBtn.addEventListener('click', convert);
+swapBtn.addEventListener('click', () => {
+  const a = sourceKey.value;
+  sourceKey.value = targetKey.value;
+  targetKey.value = a;
+  convert();
+});
+printBtn.addEventListener('click', () => window.print());
+mode.addEventListener('change', () => { updateKeyMenus(); convert(); });
+sourceKey.addEventListener('change', convert);
+targetKey.addEventListener('change', convert);
+notation.addEventListener('change', convert);
+numberStyle.addEventListener('change', convert);
+</script>
+</body>
+</html>
